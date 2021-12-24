@@ -1,295 +1,241 @@
 import java.math.BigDecimal;
-
+import java.math.MathContext;
+import java.math.RoundingMode;
 public class Calculator {
-    public long numOne;
-    public long numTwo;
-    public BigDecimal decimalOne;
-    public BigDecimal decimalTwo;
-    public long previousNumTwo;
-    public BigDecimal previousDecimalTwo;
+    public BigDecimal numOne;
+    public BigDecimal numTwo;
+    public BigDecimal previousNumTwo;
     public int editingNumber;
-    public boolean decimals;
-    public String operation;
+    public boolean editingDecimals;
     public boolean haventEditedDecimalOne;
     public boolean haventEditedDecimalTwo;
+    public String operation;
     public GUI guiReference;
+    public boolean showDecimals;
+    public boolean decimals;
     public Calculator(GUI gui) {
+        this.editingNumber = 1;
         this.decimals = false;
+        this.showDecimals = false;
+        this.numOne = new BigDecimal("0.0");
+        this.numTwo = new BigDecimal("0.0");
+        this.editingDecimals = false;
         this.haventEditedDecimalOne = true;
         this.haventEditedDecimalTwo = true;
-        this.numOne = 0;
-        this.numTwo = 0;
-        this.decimalOne = new BigDecimal("0.0");
-        this.decimalTwo = new BigDecimal("0.0");
-        this.editingNumber = 1;
+        this.previousNumTwo = new BigDecimal("0.0");
         this.guiReference = gui;
-    }
-    
-    public long add() {
-        BigDecimal decimalResult;
-        if (decimals) {
-            decimalResult = this.decimalOne.add(this.decimalTwo);
-            if (decimalResult.compareTo(new BigDecimal("1.0")) >= 0) {
-                decimalResult = decimalResult.subtract(new BigDecimal("1.0"));
-                numOne+=1;
-            } else if (decimalResult.compareTo(new BigDecimal("-1.0")) <= 0) {
-                decimalResult = decimalResult.add(new BigDecimal("1.0"));
-                numOne -= 1;
-            }
-            this.decimalOne = decimalResult;
-        }
-        return numOne + numTwo;
-    }
-
-    public long subtract() {
-        BigDecimal decimalResult;
-        if (decimals) {
-            decimalResult = this.decimalOne.subtract(this.decimalTwo);
-            if (decimalResult.compareTo(new BigDecimal("0.0")) == -1 && (numOne-numTwo) > 0) {
-                decimalResult = decimalResult.add(new BigDecimal("1.0"));
-                numOne -= 1;
-            } else if (decimalResult.compareTo(new BigDecimal("-1.0")) == -1 && (numOne - numTwo) <= 0) {
-                decimalResult = decimalResult.add(new BigDecimal("1.0"));
-                numOne -= 1;
-            }
-            this.decimalOne = decimalResult;
-        }
-        return numOne - numTwo;
-    }
-
-    public long multiply() {
-        return numOne * numTwo;
-    }
-
-    public long divide() {
-        return (long)(numOne/numTwo);
     }
 
     public void performOperation() {
-        long result;
+        BigDecimal result = new BigDecimal("0.0");
         switch (operation) {
             case "+":
                 result = add();
-                this.numOne = result;
-                this.previousNumTwo = this.numTwo;
-                this.numTwo = 0;
-                this.previousDecimalTwo = this.decimalTwo;
-                this.decimalTwo = new BigDecimal("0.0");
                 this.operation = "repeat+";
+                this.previousNumTwo = new BigDecimal(this.numTwo.toPlainString());
+                this.numTwo = new BigDecimal("0.0");
+                decimals = false;
+                haventEditedDecimalOne = true;
                 haventEditedDecimalTwo = true;
                 this.editingNumber = 1;
-                if (!decimals) {
-                    guiReference.setNumberText(numToString(this.numOne));
-                }
-                else {
-                    guiReference.setNumberText(numToString(this.numOne, this.decimalOne));
-                }
+                this.performOperation();
                 break;
             case "repeat+":
                 this.numTwo = this.previousNumTwo;
-                this.decimalTwo = this.previousDecimalTwo;
                 result = add();
                 this.numOne = result;
-                this.numTwo = 0;
-                this.decimalTwo = new BigDecimal("0.0");
+                this.numTwo = new BigDecimal("0.0");
                 this.operation = "repeat+";
+                decimals = false;
+                haventEditedDecimalOne = true;
                 haventEditedDecimalTwo = true;
-                this.editingNumber = 1;
-                if (!decimals) {
-                    guiReference.setNumberText(numToString(this.numOne));
-                } else {
-                    guiReference.setNumberText(numToString(this.numOne, this.decimalOne));
-                }                break;
+                this.editingNumber = 1;    
+                break;
             case "-":
                 result = subtract();
-                this.numOne = result;
-                this.previousNumTwo = this.numTwo;
-                this.numTwo = 0;
-                this.previousDecimalTwo = this.decimalTwo;
-                this.decimalTwo = new BigDecimal("0.0");
                 this.operation = "repeat-";
+                this.previousNumTwo = new BigDecimal(this.numTwo.toPlainString());
+                this.numTwo = new BigDecimal("0.0");
+                decimals = false;
+                haventEditedDecimalOne = true;
                 haventEditedDecimalTwo = true;
                 this.editingNumber = 1;
-                if (!decimals) {
-                    guiReference.setNumberText(numToString(this.numOne));
-                } else {
-                    guiReference.setNumberText(numToString(this.numOne, this.decimalOne));
-                }
+                this.performOperation();
                 break;
             case "repeat-":
                 this.numTwo = this.previousNumTwo;
-                this.decimalTwo = this.previousDecimalTwo;
                 result = subtract();
                 this.numOne = result;
-                this.numTwo = 0;
-                this.decimalTwo = new BigDecimal("0.0");
+                this.numTwo = new BigDecimal("0.0");
                 this.operation = "repeat-";
+                decimals = false;
+                haventEditedDecimalOne = true;
                 haventEditedDecimalTwo = true;
                 this.editingNumber = 1;
-                if (!decimals) {
-                    guiReference.setNumberText(numToString(this.numOne));
-                } else {
-                    guiReference.setNumberText(numToString(this.numOne, this.decimalOne));
-                }
                 break;
             case "*":
                 result = multiply();
-                this.numOne = result;
-                this.previousNumTwo = this.numTwo;
-                this.numTwo = 0;
                 this.operation = "repeat*";
+                this.previousNumTwo = new BigDecimal(this.numTwo.toPlainString());
+                this.numTwo = new BigDecimal("0.0");
+                decimals = false;
+                haventEditedDecimalOne = true;
+                haventEditedDecimalTwo = true;
                 this.editingNumber = 1;
-                guiReference.setNumberText(Long.toString(this.numOne));
+                this.performOperation();
                 break;
             case "repeat*":
                 this.numTwo = this.previousNumTwo;
                 result = multiply();
                 this.numOne = result;
-                this.numTwo = 0;
+                this.numTwo = new BigDecimal("0.0");
                 this.operation = "repeat*";
+                decimals = false;
+                haventEditedDecimalOne = true;
+                haventEditedDecimalTwo = true;
                 this.editingNumber = 1;
-                guiReference.setNumberText(Long.toString(this.numOne));
                 break;
             case "/":
-                if (this.numTwo == 0) {
-                    guiReference.setNumberText("DIV BY 0");
-                    this.numOne = 0;
-                    this.numTwo = 0;
-                    this.editingNumber = 1;
-                    return;
-                }
                 result = divide();
-                this.numOne = result;
-                this.previousNumTwo = this.numTwo;
-                this.numTwo = 0;
                 this.operation = "repeat/";
+                this.previousNumTwo = new BigDecimal(this.numTwo.toPlainString());
+                this.numTwo = new BigDecimal("0.0");
+                decimals = false;
+                haventEditedDecimalOne = true;
+                haventEditedDecimalTwo = true;
                 this.editingNumber = 1;
-                guiReference.setNumberText(Long.toString(this.numOne));
+                this.performOperation();
                 break;
             case "repeat/":
                 this.numTwo = this.previousNumTwo;
                 result = divide();
                 this.numOne = result;
-                this.numTwo = 0;
+                this.numTwo = new BigDecimal("0.0");
                 this.operation = "repeat/";
-                this.editingNumber = 1;
-                guiReference.setNumberText(Long.toString(this.numOne));
-                break;
-            default:
-                this.numOne = 0;
-                this.numTwo = 0;
-                this.operation = "";
-                this.decimalOne = new BigDecimal("0.0");
-                this.decimalTwo = new BigDecimal("0.0");
+                decimals = false;
                 haventEditedDecimalOne = true;
                 haventEditedDecimalTwo = true;
-                this.decimals = false;
                 this.editingNumber = 1;
-                guiReference.setNumberText(Long.toString(this.numOne));
+                break;
+            case "%":
+                this.numTwo = new BigDecimal("100.0");
+                result = divide();
+                this.numOne = result;
+                this.numTwo = new BigDecimal("0.0");
+                this.operation = "";
+                decimals = false;
+                haventEditedDecimalOne = true;
+                haventEditedDecimalTwo = true;
+                this.editingNumber = 1;
+                break;
+            case "":
+                return;
+            default:
+                this.numOne = new BigDecimal("0.0");
+                this.numTwo = new BigDecimal("0.0");
+                this.previousNumTwo = new BigDecimal("0.0");
+                this.operation = "";
+                decimals = false;
+                haventEditedDecimalOne = true;
+                this.showDecimals = false;
+                haventEditedDecimalTwo = true;
+                this.editingNumber = 1;
                 break;
         }
+        guiReference.setNumberText(numToText(result));
     }
 
-    public String numToString(long num) {
-        return Long.toString(num);
+    private BigDecimal divide() {
+        BigDecimal result;
+        try {
+            result = this.numOne.divide(this.numTwo);
+        } catch (ArithmeticException e) {
+            result = this.numOne.divide(this.numTwo, new MathContext(8,RoundingMode.HALF_UP));
+        }
+        if (result.toPlainString().indexOf(".") != -1) {
+            this.showDecimals = true;
+        }
+        return result;
     }
 
-    public String numToString(long num, BigDecimal decimal) {
-        if (decimal.compareTo(new BigDecimal("0.0")) == -1) {
-            if (num < 0) {
-                return Long.toString(num) + decimal.toPlainString().substring(2);
-            } else {
-                return "-"+ Long.toString(num) + decimal.toPlainString().substring(2);
-            }
+    private BigDecimal multiply() {
+        return this.numOne.multiply(this.numTwo);
+    }
+
+    private BigDecimal subtract() {
+        return this.numOne.subtract(this.numTwo);
+    }
+
+    private BigDecimal add() {
+        return this.numOne.add(this.numTwo);
+    }
+
+    public String numToText(BigDecimal number) {
+        number = number.stripTrailingZeros();
+        String num = number.toPlainString();
+        if (num.equals("0.0")) {
+            return "0";
+        } else if (!showDecimals && num.indexOf(".") != -1) {
+            return num.substring(0, num.indexOf("."));
         }
         else {
-            return Long.toString(num) + decimal.toPlainString().substring(1);
+            return num;
         }
     }
-
-    public String numToString(long num, String point) {
-        return Long.toString(num) + ".";
-    }
-
-    public void changeDecimalSign() {
-        if (this.editingNumber == 1) {
-            this.decimalOne = this.decimalOne.negate();
-            guiReference.setNumberText(numToString(this.numOne, this.decimalOne));
-        } else {
-            this.decimalTwo = this.decimalTwo.negate();
-            guiReference.setNumberText(numToString(this.numTwo, this.decimalTwo));
-        }
-    }
-
-    public void changeSign() {
-        if (this.editingNumber == 1) {
-            String numOneString = Long.toString(this.numOne);
-            if (numOneString.substring(0,1).equals("-")) {
-                numOneString = numOneString.substring(1, numOneString.length());
-            } else {
-                numOneString = "-" + numOneString;
-            }
-            this.numOne = Long.parseLong(numOneString);
-            guiReference.setNumberText(numToString(this.numOne));
-        } else {
-            String numTwoString = Long.toString(this.numTwo);
-            if (numTwoString.substring(0, 1).equals("-")) {
-                numTwoString = numTwoString.substring(1, numTwoString.length());
-            } else {
-                numTwoString = "-" + numTwoString;
-            }
-            this.numTwo = Long.parseLong(numTwoString);
-            guiReference.setNumberText(numToString(this.numTwo));
-        }   
-        if (decimals) {
-            changeDecimalSign();
-        }
-     }
 
     public void addToNum(String numberToAdd) {
-        if (numberToAdd.equals(".") && !decimals) {
+        if (numberToAdd.equals(".")) {
+            this.decimals = true;
+            this.showDecimals = true;
             if (this.editingNumber == 1) {
-                decimals = true;
-                guiReference.setNumberText(numToString(this.numOne, "."));
+                guiReference.setNumberText(numToText(this.numOne));
             } else {
-                decimals = true;
-                guiReference.setNumberText(numToString(this.numTwo, "."));
+                guiReference.setNumberText(numToText(this.numTwo));
             }
             return;
         }
         if (!decimals) {
             if (this.editingNumber == 1) {
-                String numOneString = Long.toString(this.numOne);
-                numOneString+=numberToAdd;
-                this.numOne = Long.parseLong(numOneString);
-                guiReference.setNumberText(numToString(this.numOne));
+                String[] numOneStrings = this.numOne.toPlainString().replace(".", "_").split("_");
+                numOneStrings[0] += numberToAdd;
+                this.numOne = new BigDecimal(numOneStrings[0] + "." + numOneStrings[1]);
+                guiReference.setNumberText(numToText(this.numOne));
             } else {
-                String numTwoString = Long.toString(this.numTwo);
-                numTwoString += numberToAdd;
-                this.numTwo = Long.parseLong(numTwoString);
-                guiReference.setNumberText(numToString(this.numTwo));
+                String[] numTwoStrings = this.numTwo.toPlainString().replace(".", "_").split("_");
+                numTwoStrings[0] += numberToAdd;
+                this.numTwo = new BigDecimal(numTwoStrings[0] + "." + numTwoStrings[1]);
+                guiReference.setNumberText(numToText(this.numTwo));
+            }
+        } else {
+            if (this.editingNumber == 1) {
+                String[] numOneStrings = this.numOne.toPlainString().replace(".", "_").split("_");
+                numOneStrings[1] += numberToAdd;
+                if (haventEditedDecimalOne) {
+                    haventEditedDecimalOne = false;
+                    numOneStrings[1] = numOneStrings[1].substring(1);
+                }
+                this.numOne = new BigDecimal(numOneStrings[0] + "." + numOneStrings[1]);
+                guiReference.setNumberText(numToText(this.numOne));
+            } else {
+                String[] numTwoStrings = this.numTwo.toPlainString().replace(".", "_").split("_");
+                numTwoStrings[1] += numberToAdd;
+                if (haventEditedDecimalTwo) {
+                    haventEditedDecimalTwo = false;
+                    numTwoStrings[1] = numTwoStrings[1].substring(1);
+                }
+                this.numTwo = new BigDecimal(numTwoStrings[0] + "." + numTwoStrings[1]);
+                guiReference.setNumberText(numToText(this.numTwo));
             }
         }
-        else {
-            if (this.editingNumber == 1) {
-                String numOneString = this.decimalOne.toPlainString();
-                numOneString += numberToAdd;
-                if (haventEditedDecimalOne) {
-                    numOneString = numOneString.substring(0,2) + numOneString.substring(3);
-                    haventEditedDecimalOne = false;
-                }
-                this.decimalOne = new BigDecimal(numOneString);
-                guiReference.setNumberText(numToString(this.numOne, this.decimalOne));
-            } else {
-                String numTwoString = this.decimalTwo.toPlainString();
-                numTwoString += numberToAdd;
-                if (haventEditedDecimalTwo) {
-                    numTwoString = numTwoString.substring(0, 2) + numTwoString.substring(3);
-                    haventEditedDecimalTwo = false;
-                }
-                this.decimalTwo = new BigDecimal(numTwoString);
-                guiReference.setNumberText(numToString(this.numTwo, this.decimalTwo));
-            }
+    }
+
+    public void negate() {
+        if (this.editingNumber == 1) {
+            this.numOne = this.numOne.negate();
+            guiReference.setNumberText(numToText(this.numOne));
+        } else {
+            this.numTwo = this.numTwo.negate();
+            guiReference.setNumberText(numToText(this.numTwo));
         }
     }
 }
