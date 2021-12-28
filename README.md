@@ -12,8 +12,8 @@ This project is the GUI and processing for a simple four function calculator. Th
 To run the calculator, first compile GUI.java with
 `javac GUI.java`.
 Then run the file with
-`java GUI`
-The following GUI should appear and the calculator can be used.
+`java GUI`.
+The following GUI should appear and the calculator can be used.\
 ![GUI Example](./calculator.png)
 
 ## Features
