@@ -14,6 +14,8 @@ To run the calculator, first compile GUI.java with
 Then run the file with
 `java GUI`.
 The following GUI should appear and the calculator can be used.\
+\
+\
 ![GUI Example](./calculator.png)
 
 ## Features
