@@ -1,14 +1,16 @@
 import javax.swing.AbstractAction;
-import javax.swing.*;
 import java.awt.event.*;
+
 public class Action extends AbstractAction {
     Calculator calc;
     String text;
+
     public Action(Calculator calc, String text) {
         super();
         this.calc = calc;
         this.text = text;
     }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         String buttonText = this.text;

@@ -1,6 +1,7 @@
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+
 public class Calculator {
     public BigDecimal numOne;
     public BigDecimal numTwo;
@@ -13,6 +14,7 @@ public class Calculator {
     public GUI guiReference;
     public boolean showDecimals;
     public boolean decimals;
+
     public Calculator(GUI gui) {
         this.editingNumber = 1;
         this.decimals = false;
@@ -49,7 +51,7 @@ public class Calculator {
                 decimals = false;
                 haventEditedDecimalOne = true;
                 haventEditedDecimalTwo = true;
-                this.editingNumber = 1;    
+                this.editingNumber = 1;
                 break;
             case "-":
                 result = subtract();
@@ -150,7 +152,7 @@ public class Calculator {
         try {
             result = this.numOne.divide(this.numTwo);
         } catch (ArithmeticException e) {
-            result = this.numOne.divide(this.numTwo, new MathContext(8,RoundingMode.HALF_UP));
+            result = this.numOne.divide(this.numTwo, new MathContext(8, RoundingMode.HALF_UP));
         }
         if (result.toPlainString().indexOf(".") != -1) {
             this.showDecimals = true;
@@ -177,8 +179,7 @@ public class Calculator {
             return "0";
         } else if (!showDecimals && num.indexOf(".") != -1) {
             return num.substring(0, num.indexOf("."));
-        }
-        else {
+        } else {
             return num;
         }
     }
