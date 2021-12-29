@@ -191,7 +191,7 @@ public class Calculator {
      *
      * @return The result of the division.
      */
-    private BigDecimal divide() {
+    public BigDecimal divide() {
         BigDecimal result;
         // Try dividing the number and catch a repeating number exception.
         try {
@@ -211,7 +211,7 @@ public class Calculator {
      *
      * @return The result of the multiplication.
      */
-    private BigDecimal multiply() {
+    public BigDecimal multiply() {
         return this.numOne.multiply(this.numTwo);
     }
 
@@ -220,7 +220,7 @@ public class Calculator {
      *
      * @return The result of the subtraction.
      */
-    private BigDecimal subtract() {
+    public BigDecimal subtract() {
         return this.numOne.subtract(this.numTwo);
     }
 
@@ -229,7 +229,7 @@ public class Calculator {
      *
      * @return The result of the addition.
      */
-    private BigDecimal add() {
+    public BigDecimal add() {
         return this.numOne.add(this.numTwo);
     }
 
